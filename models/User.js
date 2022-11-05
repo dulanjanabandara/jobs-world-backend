@@ -1,12 +1,13 @@
 import mongoose from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please provide a name"],
-    minLength: 3,
-    maxLength: 20,
+    minlength: 3,
+    maxlength: 20,
     trim: true,
   },
   email: {
@@ -21,20 +22,26 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide a password"],
-    minLength: 6,
+    minlength: 6,
   },
   lastName: {
     type: String,
-    maxLength: 20,
+    maxlength: 20,
     trim: true,
     default: "lastName",
   },
   location: {
     type: String,
     trim: true,
-    maxLength: 20,
+    maxlength: 20,
     default: "my city",
   },
+});
+
+// only trigger for User.create() and user.save(). Not trigger to User.findOneAndUpdate()
+UserSchema.pre("save", async function () {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
 });
 
 export default mongoose.model("User", UserSchema);
