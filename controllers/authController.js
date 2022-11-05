@@ -2,7 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import {
   NotFoundError,
   BadRequestError,
-  UnauthenticatedError,
+  UnAuthenticatedError,
 } from "../errors/index.js";
 import User from "../models/User.js";
 
@@ -37,18 +37,17 @@ const login = async (req, res) => {
     throw new BadRequestError("Please provide all values");
   }
 
-  const user = User.findOne({ email }).select("+password");
+  const user = await User.findOne({ email }).select("+password");
   if (!user) {
-    throw new UnauthenticatedError("Invalid credentials");
+    throw new UnAuthenticatedError("Invalid credentials");
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
   if (!isPasswordCorrect) {
-    throw new UnauthenticatedError("Invalid credentials");
+    throw new UnAuthenticatedError("Invalid credentials");
   }
-  
   const token = user.createJWT();
-  user.password = undefied;
+  user.password = undefined;
   res.status(StatusCodes.OK).json({ user, token, location: user.location });
 };
 
