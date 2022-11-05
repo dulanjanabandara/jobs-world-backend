@@ -2,6 +2,7 @@ import express from "express";
 const app = express();
 import dotenv from "dotenv";
 dotenv.config();
+import "express-async-errors";
 
 // db and authenticate user
 import connectDB from "./db/connect.js";
@@ -19,7 +20,6 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Welcome");
 });
-
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", jobsRouter);
 
