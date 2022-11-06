@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a password"],
     minlength: 6,
-    select: false,
+    select: false, // password won't be returned in queries like "findOne()".
   },
   lastName: {
     type: String,
@@ -42,6 +42,11 @@ const UserSchema = new mongoose.Schema({
 
 // only trigger for User.create() and user.save(). Not trigger to User.findOneAndUpdate()
 UserSchema.pre("save", async function () {
+  //   console.log(this.modifiedPaths());
+  //   console.log(this.isModified("name"));
+
+  if (!this.isModified("password")) return;
+  
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
