@@ -12,7 +12,7 @@ const start = async () => {
       process.env.DATABASE_PASSWORD
     );
     await connectDB(DB);
-    await Job.deleteMany();
+    // await Job.deleteMany();
 
     const jsonProducts = JSON.parse(
       await readFile(new URL("./mock-data.json", import.meta.url))
